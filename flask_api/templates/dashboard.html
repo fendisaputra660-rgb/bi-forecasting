@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+    {{ script | safe }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Forecast Plot (if available) -->
+    {% if div_forecast %}
+        <div class="mb-4">
+            {{ div_forecast | safe }}
+        </div>
+    {% endif %}
+    
+    <!-- Main Time Series Plot -->
+    <div class="mb-4">
+        {{ div1 | safe }}
+    </div>
+    
+    <!-- Two Column Layout for Category and Region -->
+    <div class="row">
+        <div class="col-lg-6 col-md-12 mb-4">
+            {{ div2 | safe }}
+        </div>
+        <div class="col-lg-6 col-md-12 mb-4">
+            {{ div3 | safe }}
+        </div>
+    </div>
+    
+    <!-- Price vs Units Plot -->
+    <div class="mb-4">
+        {{ div4 | safe }}
+    </div>
+</div>
+
+<style>
+    .container-fluid {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}

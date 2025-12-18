@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bokeh Test</title>
+</head>
+<body style="background: #0f0e1d; color: #e0e0e0; font-family: Arial;">
+    <h1>Bokeh Rendering Test</h1>
+    <p>Jika Anda melihat grafik di bawah, Bokeh berhasil render:</p>
+    
+    <!-- Div untuk chart -->
+    <div id="bokeh-chart-div" style="width: 100%; height: 400px; border: 1px solid cyan; margin: 20px 0;">
+        Loading chart...
+    </div>
+    
+    <hr>
+    <p>Status: <span id="status">Waiting for Bokeh...</span></p>
+    
+    <!-- Bokeh JS Library -->
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.0.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.3.0.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.0.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.0.min.js"></script>
+    
+    <script>
+        // Simple Bokeh test
+        Bokeh.setLogLevel("info");
+        
+        const plot = Bokeh.Plotting.figure({
+            title: "Test Chart - Should Show Points",
+            x_axis_label: 'X Axis',
+            y_axis_label: 'Y Axis',
+            width: 800,
+            height: 300,
+            background_fill_color: "#1a1a3e",
+            border_fill_color: "#2a3142"
+        });
+        
+        // Add data
+        const x = [1, 2, 3, 4, 5];
+        const y = [2, 5, 8, 2, 7];
+        
+        plot.circle(x, y, {size: 10, color: '#00d4ff', alpha: 0.8});
+        plot.line(x, y, {color: '#7c3aed', line_width: 2});
+        
+        // Render
+        try {
+            Bokeh.Plotting.show(plot, '#bokeh-chart-div');
+            document.getElementById('status').innerHTML = '<span style="color: #00d4ff;">SUCCESS - Chart Rendered!</span>';
+        } catch(e) {
+            document.getElementById('status').innerHTML = '<span style="color: #ff6b6b;">ERROR: ' + e.message + '</span>';
+        }
+    </script>
+</body>
+</html>

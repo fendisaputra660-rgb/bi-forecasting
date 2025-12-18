@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bokeh Minimal Test</title>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.4.3.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.4.3.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.4.3.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.4.3.min.js"></script>
+    <style>
+        body {
+            background: #0f1419;
+            color: #e5e7eb;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #00d9ff;
+            text-align: center;
+        }
+        
+        .chart-box {
+            background: #1a1f2e;
+            border: 1px solid #2a3142;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 420px;
+        }
+        
+        .chart-title {
+            color: #00d9ff;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        div[data-root-id] {
+            display: block !important;
+            width: 100% !important;
+            height: 380px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .bk-root {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .bk-figure {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        svg, canvas {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bokeh Chart Test</h1>
+        <p style="text-align: center; color: #9ca3af;">If you see a chart below, Bokeh is working correctly.</p>
+        
+        <div class="chart-box">
+            <div class="chart-title">Test Chart 1: Line Chart</div>
+            <div id="test-plot-1" style="display: block; width: 100%; height: 380px;"></div>
+        </div>
+        
+        <div class="chart-box">
+            <div class="chart-title">Test Chart 2: Scatter Plot</div>
+            <div id="test-plot-2" style="display: block; width: 100%; height: 380px;"></div>
+        </div>
+    </div>
+    
+    <script>
+        console.log("Test page loaded");
+        console.log("Bokeh version:", Bokeh.version);
+        
+        // Create simple test charts
+        const { figure } = Bokeh.plotting;
+        const { HoverTool } = Bokeh.models;
+        
+        // Chart 1: Line chart
+        const p1 = figure({
+            title: "Test Line Chart",
+            x_axis_label: "X",
+            y_axis_label: "Y",
+            width: 1000,
+            height: 380,
+            tools: "pan,wheel_zoom,box_zoom,reset,save",
+            background_fill_color: "#1a1f2e"
+        });
+        
+        const x = [1, 2, 3, 4, 5];
+        const y = [2, 4, 3, 5, 6];
+        
+        p1.line(x, y, { line_width: 2, color: "#00d9ff" });
+        p1.scatter(x, y, { size: 8, color: "#ff6b9d" });
+        
+        Bokeh.Plotting.show(p1, "#test-plot-1");
+        console.log("Chart 1 rendered");
+        
+        // Chart 2: Scatter
+        const p2 = figure({
+            title: "Test Scatter Plot",
+            x_axis_label: "X",
+            y_axis_label: "Y",
+            width: 1000,
+            height: 380,
+            tools: "pan,wheel_zoom,box_zoom,reset,save",
+            background_fill_color: "#1a1f2e"
+        });
+        
+        p2.scatter(x, y, { size: 10, color: "#2ecc71", alpha: 0.7 });
+        
+        Bokeh.Plotting.show(p2, "#test-plot-2");
+        console.log("Chart 2 rendered");
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+flask
+flask-cors
+flask-login
+flask-sqlalchemy
+werkzeug
+numpy
+pandas
+scikit-learn
+joblib
+bokeh
+# tensorflow is optional: only required if you call /predict
+# tensorflow

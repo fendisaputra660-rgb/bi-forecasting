@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Business Intelligence{% endblock %}
+
+{% block extra_head %}
+    {{ script | safe }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Business Intelligence</h2>
+        <p class="text-muted">User: {{ username }}</p>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        {{ div1 | safe }}
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-6">
+        {{ div2 | safe }}
+    </div>
+</div>
+{% endblock %}

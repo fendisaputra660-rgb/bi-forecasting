@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env/
+
+# Database & instance
+instance/
+*.db
+
+# Notebook & testing
+notebooks/
+test_*.py
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Cleanup scripts
+cleanup.bat
+cleanup.ps1
+
+# Vendor / template
+flask-adminlte-master/
+flask-adminlte-master.zip

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Forecasting Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --dark-bg: #0f1419;
+            --dark-card: #1a1f2e;
+            --dark-border: #2a3142;
+            --neon-cyan: #00d9ff;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 50%, var(--dark-bg) 100%);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar-custom {
+            background: rgba(15, 20, 25, 0.95);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .navbar-custom h1 {
+            color: var(--neon-cyan);
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .navbar-custom .logout-btn {
+            background: linear-gradient(135deg, #ff3366 0%, #ff0000 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .navbar-custom .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 51, 102, 0.4);
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        
+        .section-title {
+            color: var(--neon-cyan);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .chart-box {
+            background: rgba(26, 31, 46, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            min-height: 520px;
+        }
+        
+        .chart-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .chart-header h5 {
+            color: var(--neon-cyan);
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+        
+        .chart-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .chart-content {
+            min-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* CRITICAL FIX for Bokeh 3.3.1 */
+        div[data-root-id] {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+        
+        div[data-root-id] * {
+            display: block !important;
+        }
+        
+        .bk-root {
+            display: flex !important;
+            width: 100% !important;
+        }
+        
+        .bk-figure {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        svg {
+            display: block !important;
+        }
+        
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .error-box {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            color: #fca5a5;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar-custom">
+        <h1>🚀 FORECASTING LSTM RETAIL</h1>
+        <a href="/logout" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container-fluid">
+        <!-- Stats Cards -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <i class="fas fa-database" style="font-size: 1.5rem; color: var(--neon-cyan); margin-bottom: 0.5rem;"></i>
+                <div class="stat-value">762</div>
+                <div class="stat-label">Data Points</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar" style="font-size: 1.5rem; color: var(--neon-cyan); margin-bottom: 0.5rem;"></i>
+                <div class="stat-value">2Y</div>
+                <div class="stat-label">Time Span</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-cube" style="font-size: 1.5rem; color: var(--neon-cyan); margin-bottom: 0.5rem;"></i>
+                <div class="stat-value">14</div>
+                <div class="stat-label">Features</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-pie" style="font-size: 1.5rem; color: var(--neon-cyan); margin-bottom: 0.5rem;"></i>
+                <div class="stat-value">9</div>
+                <div class="stat-label">Visualizations</div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <h2 class="section-title">📊 Analytics Charts</h2>
+        
+        {% if plot_divs and plot_divs|length > 0 %}
+            
+            <!-- Chart 1: Units Sold -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>📈 Units Sold Over Time</h5>
+                    <p>Menampilkan tren penjualan unit dari waktu ke waktu. Berguna untuk melihat pola musiman dan trend penjualan.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot1'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 2: Price -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>💰 Price Trend</h5>
+                    <p>Menampilkan perubahan harga produk. Membantu menganalisis strategi pricing dan dampaknya terhadap penjualan.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot2'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 3: Inventory -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>📦 Inventory Level</h5>
+                    <p>Menunjukkan jumlah stok barang. Penting untuk manajemen supply chain dan menghindari stockout/overstock.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot3'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 4: Demand -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>📊 Demand</h5>
+                    <p>Menampilkan permintaan produk dari pelanggan. Membantu dalam forecasting dan perencanaan produksi.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot4'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 5: Price vs Units -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>💹 Price vs Units (Scatter)</h5>
+                    <p>Menunjukkan hubungan antara harga dan jumlah unit terjual. Menganalisis price elasticity.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot5'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 6: Seasonal -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>🔄 Seasonal Pattern</h5>
+                    <p>Mengidentifikasi pola musiman dalam data penjualan. Membantu perencanaan inventory musiman.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot6'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 7: Revenue -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>💵 Revenue Trend</h5>
+                    <p>Menampilkan tren pendapatan (units × price). Metrik kunci untuk mengukur kesehatan bisnis.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot7'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 8: Growth Rate -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>📈 Growth Rate</h5>
+                    <p>Menunjukkan laju pertumbuhan penjualan atau revenue. Mengidentifikasi momentum bisnis.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot8'] | safe }}
+                </div>
+            </div>
+            
+            <!-- Chart 9: Correlation -->
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h5>🔗 Correlation Matrix</h5>
+                    <p>Menampilkan korelasi antar variabel. Mengidentifikasi faktor-faktor yang saling mempengaruhi.</p>
+                </div>
+                <div class="chart-content">
+                    {{ plot_divs['plot9'] | safe }}
+                </div>
+            </div>
+            
+        {% else %}
+            <div class="error-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>⚠️ No charts available</strong><br>
+                {% if error %}
+                    Error: {{ error }}
+                {% else %}
+                    Please ensure CSV files exist in: data/processed/daily_features.csv
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bokeh Script - MUST be at the END before closing body -->
+    {% if script %}
+        {{ script | safe }}
+    {% endif %}
+</body>
+</html>
